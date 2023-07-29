@@ -10,6 +10,7 @@ const UserSchema = new Schema({
   workouts: [{ type: Schema.Types.ObjectId, ref: "Workout" }],
   exercises: [{ type: Schema.Types.ObjectId, ref: "Exercise" }],
   created_at: { type: Date, required: true },
+  updated_at: { type: Date, required: true },
 });
 
 UserSchema.virtual("full_name").get(function () {

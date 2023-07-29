@@ -4,10 +4,13 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+const useDatabase = require("./database");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
+
+useDatabase().catch((err) => console.error(err));
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -29,9 +32,8 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.json({ success: false, message: err.message });
 });
 
 module.exports = app;
