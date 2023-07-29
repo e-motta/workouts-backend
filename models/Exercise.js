@@ -9,6 +9,7 @@ const ExerciseSchema = new Schema({
     required: true,
   },
   created_at: { type: Date, required: true },
+  updated_at: { type: Date, required: true },
 });
 
 module.exports = mongoose.model("Exercise", ExerciseSchema);
