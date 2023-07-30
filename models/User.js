@@ -7,8 +7,6 @@ const UserSchema = new Schema({
   email: { type: String, required: true },
   hashed_password: { type: String, required: true },
   roles: [{ type: String, enum: ["admin", "member"] }],
-  workouts: [{ type: Schema.Types.ObjectId, ref: "Workout" }],
-  exercises: [{ type: Schema.Types.ObjectId, ref: "Exercise" }],
   created_at: { type: Date, required: true },
   updated_at: { type: Date, required: true },
 });

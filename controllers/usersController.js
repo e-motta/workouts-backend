@@ -8,7 +8,7 @@ const UserSchema = require("../models/user");
 exports.users_get = asyncHandler(async (req, res, next) => {
   const users = await UserSchema.find(
     {},
-    "id first_name last_name email roles workouts exercises created_at updated_at"
+    "id first_name last_name email roles created_at updated_at"
   );
 
   res.json({
@@ -27,7 +27,7 @@ exports.users_get_detail = asyncHandler(async (req, res, next) => {
 
   const user = await UserSchema.findById(
     req.params.id,
-    "id first_name last_name email roles workouts exercises created_at updated_at"
+    "id first_name last_name email roles created_at updated_at"
   );
 
   if (!user) {
@@ -123,8 +123,6 @@ exports.users_create = [
           email,
           hashed_password,
           roles: [],
-          workouts: [],
-          exercises: [],
           created_at: new Date(),
           updated_at: new Date(),
         });

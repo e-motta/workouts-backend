@@ -8,6 +8,7 @@ const ExerciseSchema = new Schema({
     ref: "MuscleGroup",
     required: true,
   },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   created_at: { type: Date, required: true },
   updated_at: { type: Date, required: true },
 });

@@ -7,7 +7,9 @@ const SessionSchema = new Schema({
   reps: { type: Number, required: true },
   weight: { type: Number, required: true },
   rest: { type: Number, required: true },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   created_at: { type: Date, required: true },
+  updated_at: { type: Date, required: true },
 });
 
 module.exports = mongoose.model("Session", SessionSchema);

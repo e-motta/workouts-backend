@@ -8,7 +8,7 @@ const ExerciseSchema = require("../models/Exercise");
 exports.muscle_groups_get = asyncHandler(async (req, res, next) => {
   const data = await MuscleGroupSchema.find(
     {},
-    "id name created_at updated_at"
+    "id name user created_at updated_at"
   );
 
   res.json({
@@ -27,7 +27,7 @@ exports.muscle_groups_get_detail = asyncHandler(async (req, res, next) => {
 
   const data = await MuscleGroupSchema.findById(
     req.params.id,
-    "id name created_at updated_at"
+    "id name user created_at updated_at"
   );
 
   if (!data) {
@@ -45,9 +45,10 @@ exports.muscle_groups_get_detail = asyncHandler(async (req, res, next) => {
 
 exports.muscle_groups_create = [
   body("name", "Name must not be empty.").trim().isLength({ min: 1 }).escape(),
-  body("name").custom(async (value) => {
+  body("name").custom(async (value, { req }) => {
     const nameExists = await MuscleGroupSchema.exists({
-      name: { $regex: new RegExp(value.toLowerCase(), "i") },
+      name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
+      user: req.user,
     });
     // empty string will mistakenly match an existing name
     if (value.length > 0 && nameExists)
@@ -70,6 +71,7 @@ exports.muscle_groups_create = [
 
     const muscleGroup = new MuscleGroupSchema({
       name,
+      user: req.user,
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -81,6 +83,7 @@ exports.muscle_groups_create = [
       data: {
         id: muscleGroup._id,
         name: muscleGroup.name,
+        user: muscleGroup.user,
         created_at: muscleGroup.created_at,
         updated_at: muscleGroup.updated_at,
       },
@@ -90,9 +93,10 @@ exports.muscle_groups_create = [
 
 exports.muscle_groups_update = [
   body("name", "Name must not be empty.").trim().isLength({ min: 1 }).escape(),
-  body("name").custom(async (value) => {
+  body("name").custom(async (value, { req }) => {
     const nameExists = await MuscleGroupSchema.exists({
-      name: { $regex: new RegExp(value.toLowerCase(), "i") },
+      name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
+      user: req.user,
     });
     // empty string will mistakenly match an existing name
     if (value.length > 0 && nameExists)
@@ -120,7 +124,7 @@ exports.muscle_groups_update = [
     try {
       const muscleGroup = await MuscleGroupSchema.findById(
         req.params.id,
-        "id name created_at updated_at"
+        "id name user created_at updated_at"
       );
 
       if (!muscleGroup) {
@@ -130,10 +134,10 @@ exports.muscle_groups_update = [
       }
 
       const { name } = req.body;
-      const upated_at = new Date();
+      const updated_at = new Date();
 
       muscleGroup.name = name;
-      muscleGroup.updated_at = upated_at;
+      muscleGroup.updated_at = updated_at;
 
       await muscleGroup.save();
 
@@ -143,8 +147,9 @@ exports.muscle_groups_update = [
         data: {
           id: muscleGroup._id,
           name,
+          user: muscleGroup.user,
           created_at: muscleGroup.created_at,
-          updated_at: upated_at,
+          updated_at,
         },
       });
     } catch (err) {
@@ -162,6 +167,7 @@ exports.muscle_groups_delete = asyncHandler(async (req, res, next) => {
 
   const muscleGroupExists = await MuscleGroupSchema.exists({
     _id: req.params.id,
+    user: req.user,
   });
 
   if (muscleGroupExists) {
