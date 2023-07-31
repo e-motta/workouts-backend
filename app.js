@@ -9,6 +9,8 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var muscleGroupsRouter = require("./routes/muscleGroups");
 var exercisesRouter = require("./routes/exercises");
+var workoutsRouter = require("./routes/workouts");
+var sessionsRouter = require("./routes/sessions");
 
 var app = express();
 
@@ -29,6 +31,8 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/muscle_groups", muscleGroupsRouter);
 app.use("/exercises", exercisesRouter);
+app.use("/workouts", workoutsRouter);
+app.use("/sessions", sessionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
