@@ -28,11 +28,11 @@ app.use(function (req, res, next) {
 });
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/muscle_groups", muscleGroupsRouter);
-app.use("/exercises", exercisesRouter);
-app.use("/workouts", workoutsRouter);
-app.use("/sessions", sessionsRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/muscle_groups", muscleGroupsRouter);
+app.use("/api/exercises", exercisesRouter);
+app.use("/api/workouts", workoutsRouter);
+app.use("/api/sessions", sessionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
