@@ -54,7 +54,7 @@ exports.sessions_create = [
     }
     const exerciseExists = await ExerciseSchema.exists({
       _id: value,
-      user: req.user,
+      user: req.user.id,
     });
     if (!exerciseExists)
       throw new Error(`Exercise with id '${value}' does not exist.`);
@@ -92,7 +92,7 @@ exports.sessions_create = [
       reps,
       weight: weight ? weight : 0,
       rest,
-      user: req.user,
+      user: req.user.id,
       date: date ? date : new Date(),
       created_at: new Date(),
       updated_at: new Date(),
@@ -130,7 +130,7 @@ exports.sessions_update = [
     }
     const exerciseExists = await ExerciseSchema.exists({
       _id: value,
-      user: req.user,
+      user: req.user.id,
     });
     if (!exerciseExists)
       throw new Error(`Exercise with id '${value}' does not exist.`);

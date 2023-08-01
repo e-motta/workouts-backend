@@ -48,7 +48,7 @@ exports.muscle_groups_create = [
   body("name").custom(async (value, { req }) => {
     const nameExists = await MuscleGroupSchema.exists({
       name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
-      user: req.user,
+      user: req.user.id,
     });
     // empty string will mistakenly match an existing name
     if (value.length > 0 && nameExists)
@@ -71,7 +71,7 @@ exports.muscle_groups_create = [
 
     const muscleGroup = new MuscleGroupSchema({
       name,
-      user: req.user,
+      user: req.user.id,
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -96,7 +96,7 @@ exports.muscle_groups_update = [
   body("name").custom(async (value, { req }) => {
     const nameExists = await MuscleGroupSchema.exists({
       name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
-      user: req.user,
+      user: req.user.id,
     });
     // empty string will mistakenly match an existing name
     if (value.length > 0 && nameExists)
@@ -167,7 +167,7 @@ exports.muscle_groups_delete = asyncHandler(async (req, res, next) => {
 
   const muscleGroupExists = await MuscleGroupSchema.exists({
     _id: req.params.id,
-    user: req.user,
+    user: req.user.id,
   });
 
   if (muscleGroupExists) {

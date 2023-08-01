@@ -62,7 +62,7 @@ exports.workouts_create = [
 
     const workout = new WorkoutSchema({
       name,
-      user: req.user,
+      user: req.user.id,
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -150,7 +150,7 @@ exports.workouts_delete = asyncHandler(async (req, res, next) => {
 
   const workoutExists = await WorkoutSchema.exists({
     _id: req.params.id,
-    user: req.user,
+    user: req.user.id,
   });
 
   if (workoutExists) {
@@ -179,7 +179,7 @@ exports.workouts_add_exercise = [
       }
       const exerciseExists = await ExerciseSchema.exists({
         _id: value[i],
-        user: req.user,
+        user: req.user.id,
       });
       if (!exerciseExists)
         throw new Error(`Exercise with id '${value[i]}' does not exist.`);

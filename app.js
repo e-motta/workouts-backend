@@ -1,18 +1,20 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 
 const useDatabase = require("./database");
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var muscleGroupsRouter = require("./routes/muscleGroups");
-var exercisesRouter = require("./routes/exercises");
-var workoutsRouter = require("./routes/workouts");
-var sessionsRouter = require("./routes/sessions");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const muscleGroupsRouter = require("./routes/muscleGroups");
+const exercisesRouter = require("./routes/exercises");
+const workoutsRouter = require("./routes/workouts");
+const sessionsRouter = require("./routes/sessions");
+const authRouter = require("./routes/auth");
+const auth = require("./auth");
 
-var app = express();
+const app = express();
 
 useDatabase().catch((err) => console.error(err));
 
@@ -22,10 +24,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(function (req, res, next) {
-  req.user = "64c442c20169a62353cc8643"; // TODO: change this to the logged in user
-  next();
-});
+app.use("/api/auth", authRouter);
+app.use(auth.authenticateToken);
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);

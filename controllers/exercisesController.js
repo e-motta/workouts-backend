@@ -4,7 +4,6 @@ const { body, validationResult } = require("express-validator");
 
 const ExerciseSchema = require("../models/Exercise");
 const MuscleGroupSchema = require("../models/MuscleGroup");
-const WorkoutSchema = require("../models/Workout");
 const SessionSchema = require("../models/Session");
 
 exports.exercises_get = asyncHandler(async (req, res, next) => {
@@ -50,7 +49,7 @@ exports.exercises_create = [
   body("name").custom(async (value, { req }) => {
     const nameExists = await ExerciseSchema.exists({
       name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
-      user: req.user,
+      user: req.user.id,
     });
     // empty string will mistakenly match an existing name
     if (value.length > 0 && nameExists)
@@ -62,7 +61,7 @@ exports.exercises_create = [
     if (
       value.length > 0 &&
       (!Mongoose.prototype.isValidObjectId(value) ||
-        !(await MuscleGroupSchema.exists({ _id: value, user: req.user })))
+        !(await MuscleGroupSchema.exists({ _id: value, user: req.user.id })))
     ) {
       throw new Error("Muscle Group not found");
     }
@@ -80,7 +79,7 @@ exports.exercises_create = [
       value.length > 0 &&
       (await MuscleGroupSchema.exists({
         name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
-        user: req.user,
+        user: req.user.id,
       }))
     ) {
       throw new Error(`Muscle Group '${value}' already exists`);
@@ -114,7 +113,7 @@ exports.exercises_create = [
     if (muscle_group_id.length === 0) {
       muscleGroup = new MuscleGroupSchema({
         name: muscle_group_name,
-        user: req.user,
+        user: req.user.id,
         created_at: new Date(),
         updated_at: new Date(),
       });
@@ -125,7 +124,7 @@ exports.exercises_create = [
 
     const exercise = new ExerciseSchema({
       name,
-      user: req.user,
+      user: req.user.id,
       muscle_group: muscleGroup,
       created_at: new Date(),
       updated_at: new Date(),
@@ -153,7 +152,7 @@ exports.exercises_update = [
   body("name").custom(async (value, { req }) => {
     const nameExists = await MuscleGroupSchema.exists({
       name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
-      user: req.user,
+      user: req.user.id,
     });
     // empty string will mistakenly match an existing name
     if (value.length > 0 && nameExists)
@@ -165,7 +164,7 @@ exports.exercises_update = [
     if (
       value.length > 0 &&
       (!Mongoose.prototype.isValidObjectId(value, { req }) ||
-        !(await MuscleGroupSchema.exists({ _id: value, user: req.user })))
+        !(await MuscleGroupSchema.exists({ _id: value, user: req.user.id })))
     ) {
       throw new Error("Muscle Group not found");
     }
@@ -183,7 +182,7 @@ exports.exercises_update = [
       value.length > 0 &&
       (await MuscleGroupSchema.exists({
         name: { $regex: new RegExp(`^${value.toLowerCase()}$`, "i") },
-        user: req.user,
+        user: req.user.id,
       }))
     ) {
       throw new Error(`Muscle Group '${value}' already exists`);
@@ -227,7 +226,7 @@ exports.exercises_update = [
       if (muscle_group_id.length === 0) {
         muscleGroup = new MuscleGroupSchema({
           name: muscle_group_name,
-          user: req.user,
+          user: req.user.id,
           created_at: new Date(),
           updated_at: new Date(),
         });
@@ -269,7 +268,7 @@ exports.exercises_delete = asyncHandler(async (req, res, next) => {
 
   const exerciseExists = await ExerciseSchema.exists({
     _id: req.params.id,
-    user: req.user,
+    user: req.user.id,
   });
 
   if (exerciseExists) {
