@@ -28,9 +28,11 @@ exports.login = asyncHandler(function (req, res, next) {
         roles: user.roles,
       },
       process.env.JWT_ACCESS_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      (options = req.body.remember_me
+        ? undefined
+        : {
+            expiresIn: "24h",
+          })
     );
 
     res.json({
