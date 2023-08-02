@@ -1,10 +1,7 @@
-const { Mongoose } = require("mongoose");
 const asyncHandler = require("express-async-handler");
 const auth = require("../auth");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-
-const UserSchema = require("../models/user");
 
 exports.login = asyncHandler(function (req, res, next) {
   auth.passport.authenticate("local", (err, user, info) => {
