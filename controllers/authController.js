@@ -35,6 +35,8 @@ exports.login = asyncHandler(function (req, res, next) {
           })
     );
 
+    res.cookie("accessToken", token, { httpOnly: true }); // todo: add 'secure: true'
+
     res.json({
       success: true,
       message: "User logged in successfully.",
@@ -46,8 +48,16 @@ exports.login = asyncHandler(function (req, res, next) {
         roles: user.roles,
         created_at: user.created_at,
         updated_at: user.updated_at,
-        token,
       },
     });
   })(req, res, next);
+});
+
+exports.logout = asyncHandler(function (req, res, next) {
+  res.cookie("accessToken", "", { httpOnly: true, expires: new Date(0) }); // todo: add 'secure: true'
+
+  res.json({
+    success: true,
+    message: "User logged out successfully.",
+  });
 });
