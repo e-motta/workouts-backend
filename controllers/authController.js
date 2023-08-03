@@ -10,7 +10,7 @@ exports.login = asyncHandler(function (req, res, next) {
     }
 
     if (!user) {
-      const err = new Error("User not found");
+      const err = new Error(info.message || "User not found");
       err.status = 404;
       return next(err);
     }
