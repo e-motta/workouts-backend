@@ -2,10 +2,12 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
+const compression = require("compression");
+const helmet = require("helmet");
+const cors = require("cors");
 
+const { log, logError } = require("./logger");
 const useDatabase = require("./database");
-const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const muscleGroupsRouter = require("./routes/muscleGroups");
 const exercisesRouter = require("./routes/exercises");
@@ -16,9 +18,30 @@ const auth = require("./auth");
 
 const app = express();
 
+app.use(log);
+
 useDatabase().catch((err) => console.error(err));
 
-app.use(logger("dev"));
+const corsOptions = {
+  origin: ["https://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'"], // todo: add host
+      formAction: ["'self'"], // todo: add host
+    },
+  })
+);
+
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -27,7 +50,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/auth", authRouter);
 app.use(auth.authenticateToken);
 
-app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/muscle_groups", muscleGroupsRouter);
 app.use("/api/exercises", exercisesRouter);
@@ -44,6 +66,8 @@ app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  logError(err);
 
   res.status(err.status || 500);
   res.json({ success: false, message: err.message });

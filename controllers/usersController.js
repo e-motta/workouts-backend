@@ -97,8 +97,6 @@ exports.users_create = [
   }),
 
   asyncHandler(async function (req, res, next) {
-    // logger.info(`${req.method} ${req.originalUrl} ${res.statusCode}}`);
-
     const errors = validationResult(req);
 
     const { first_name, last_name, email, password } = req.body;
