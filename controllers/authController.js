@@ -4,22 +4,16 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 exports.login = asyncHandler(function (req, res, next) {
-  auth.passport.authenticate("local", (err, user, info) => {
+  auth.passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) {
       return next(err);
     }
 
     if (!user) {
-      const err = new Error(info.message || "User not found");
-      err.status = 404;
+      const err = new Error(info.message || "Authentication failed");
+      err.status = 401;
       return next(err);
     }
-
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-    });
 
     const token = jwt.sign(
       {
