@@ -35,8 +35,8 @@ app.use(
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
-      connectSrc: ["'self'"], // todo: add host
-      formAction: ["'self'"], // todo: add host
+      connectSrc: ["'self'"],
+      formAction: ["'self'"],
     },
   })
 );
@@ -48,13 +48,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/auth", authRouter);
-app.use(auth.authenticateToken);
 
-app.use("/api/users", usersRouter);
-app.use("/api/muscle_groups", muscleGroupsRouter);
-app.use("/api/exercises", exercisesRouter);
-app.use("/api/workouts", workoutsRouter);
-app.use("/api/sessions", sessionsRouter);
+app.use("/api/users", auth.authenticateToken, usersRouter);
+app.use("/api/muscle_groups", auth.authenticateToken, muscleGroupsRouter);
+app.use("/api/exercises", auth.authenticateToken, exercisesRouter);
+app.use("/api/workouts", auth.authenticateToken, workoutsRouter);
+app.use("/api/sessions", auth.authenticateToken, sessionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

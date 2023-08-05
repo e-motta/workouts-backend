@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "watch": "nodemon ./bin/www",
-    "dev": "DEBUG=inventory-app:* npm run watch"
+    "dev": "DEBUG=workouts:* npm run watch"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
