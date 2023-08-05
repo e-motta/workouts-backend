@@ -7,7 +7,7 @@ const ExerciseSchema = require("../models/Exercise");
 
 exports.sessions_get = asyncHandler(async (req, res, next) => {
   const data = await SessionSchema.find(
-    {},
+    req.user.roles.includes("admin") ? {} : { user: req.user.id },
     "id name exercise workout series reps weight rest user created_at updated_at"
   );
 

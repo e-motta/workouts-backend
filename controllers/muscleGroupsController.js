@@ -7,7 +7,7 @@ const ExerciseSchema = require("../models/Exercise");
 
 exports.muscle_groups_get = asyncHandler(async (req, res, next) => {
   const data = await MuscleGroupSchema.find(
-    {},
+    req.user.roles.includes("admin") ? {} : { user: req.user.id },
     "id name user created_at updated_at"
   );
 

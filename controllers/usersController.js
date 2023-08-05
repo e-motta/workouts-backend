@@ -7,7 +7,7 @@ const UserSchema = require("../models/user");
 
 exports.users_get = asyncHandler(async (req, res, next) => {
   const users = await UserSchema.find(
-    {},
+    req.user.roles.includes("admin") ? {} : { user: req.user.id },
     "id first_name last_name email roles created_at updated_at"
   );
 

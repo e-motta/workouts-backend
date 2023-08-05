@@ -8,7 +8,7 @@ const SessionSchema = require("../models/Session");
 
 exports.exercises_get = asyncHandler(async (req, res, next) => {
   const data = await ExerciseSchema.find(
-    {},
+    req.user.roles.includes("admin") ? {} : { user: req.user.id },
     "id name user muscle_group created_at updated_at"
   ).populate("muscle_group");
 
