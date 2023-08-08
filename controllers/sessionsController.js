@@ -9,7 +9,7 @@ const WorkoutSchema = require("../models/Workout");
 exports.sessions_get = asyncHandler(async (req, res, next) => {
   const data = await SessionSchema.find(
     req.user.roles.includes("admin") ? {} : { user: req.user.id },
-    "id name exercise workout sets reps weight rest user created_at updated_at"
+    "id name exercise workout sets reps weight rest user date created_at updated_at"
   );
 
   res.json({
@@ -28,7 +28,7 @@ exports.sessions_get_detail = asyncHandler(async (req, res, next) => {
 
   const data = await SessionSchema.findById(
     req.params.id,
-    "id name exercise workout sets reps weight rest user created_at updated_at"
+    "id name exercise workout sets reps weight rest user date created_at updated_at"
   );
 
   if (!data) {
@@ -78,11 +78,17 @@ exports.sessions_create = [
     return true;
   }),
   body("sets", "Sets must not be empty.").trim().isLength({ min: 1 }).escape(),
+  body("sets", "Sets must be greater than 0.").isInt({ gt: 0 }).escape(),
   body("reps", "Repetitions must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
+  body("reps", "Repetitions must be greater than 0.").isInt({ gt: 0 }).escape(),
   body("rest", "Rest must not be empty.").trim().isLength({ min: 1 }).escape(),
+  body("rest", "Rest must be 0 or greater.").isInt({ gt: -1 }).escape(),
+  body("weight", "Weight must be a number.").isNumeric().escape(),
+  body("weight", "Weight must be 0 or greater.").isInt({ gt: -1 }).escape(),
+  body("date", "Date must be a date.").isDate().escape(),
 
   asyncHandler(async function (req, res, next) {
     const errors = validationResult(req);
@@ -165,11 +171,17 @@ exports.sessions_update = [
     return true;
   }),
   body("sets", "Sets must not be empty.").trim().isLength({ min: 1 }).escape(),
+  body("sets", "Sets must be greater than 0.").isInt({ gt: 0 }).escape(),
   body("reps", "Repetitions must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
+  body("reps", "Repetitions must be greater than 0.").isInt({ gt: 0 }).escape(),
   body("rest", "Rest must not be empty.").trim().isLength({ min: 1 }).escape(),
+  body("rest", "Rest must be 0 or greater.").isInt({ gt: -1 }).escape(),
+  body("weight", "Weight must be a number.").isNumeric().escape(),
+  body("weight", "Weight must be 0 or greater.").isInt({ gt: -1 }).escape(),
+  body("date", "Date must be a date.").isDate().escape(),
 
   asyncHandler(async function (req, res, next) {
     if (!Mongoose.prototype.isValidObjectId(req.params.id)) {
@@ -191,7 +203,7 @@ exports.sessions_update = [
     try {
       const session = await SessionSchema.findById(
         req.params.id,
-        "id name exercise workout sets reps weight rest user created_at updated_at"
+        "id name exercise workout sets reps weight rest user date created_at updated_at"
       );
 
       if (!session) {
