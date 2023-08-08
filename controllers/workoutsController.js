@@ -63,6 +63,7 @@ exports.workouts_create = [
     const workout = new WorkoutSchema({
       name,
       user: req.user.id,
+      exercises: [],
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -106,7 +107,7 @@ exports.workouts_update = [
     try {
       const workout = await WorkoutSchema.findById(
         req.params.id,
-        "id name user created_at updated_at"
+        "id name user exercises created_at updated_at"
       );
 
       if (!workout) {

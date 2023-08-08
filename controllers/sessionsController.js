@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 
 const SessionSchema = require("../models/Session");
 const ExerciseSchema = require("../models/Exercise");
+const WorkoutSchema = require("../models/Workout");
 
 exports.sessions_get = asyncHandler(async (req, res, next) => {
   const data = await SessionSchema.find(
@@ -60,6 +61,22 @@ exports.sessions_create = [
       throw new Error(`Exercise with id '${value}' does not exist.`);
     return true;
   }),
+  body("workout", "Workout must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("workout").custom(async (value, { req }) => {
+    if (!Mongoose.prototype.isValidObjectId(value)) {
+      throw new Error(`Workout with id '${value}' does not exist.`);
+    }
+    const workoutExists = await WorkoutSchema.exists({
+      _id: value,
+      user: req.user.id,
+    });
+    if (!workoutExists)
+      throw new Error(`Workout with id '${value}' does not exist.`);
+    return true;
+  }),
   body("series", "Series must not be empty.")
     .trim()
     .isLength({ min: 1 })
@@ -81,13 +98,11 @@ exports.sessions_create = [
       return;
     }
 
-    const { exercise, series, reps, weight, rest, date } = req.body;
-
-    const exercise_obj = await ExerciseSchema.findById(exercise, "workout");
+    const { exercise, workout, series, reps, weight, rest, date } = req.body;
 
     const session = new SessionSchema({
       exercise,
-      workout: exercise_obj.workout,
+      workout,
       series,
       reps,
       weight: weight ? weight : 0,
@@ -136,6 +151,22 @@ exports.sessions_update = [
       throw new Error(`Exercise with id '${value}' does not exist.`);
     return true;
   }),
+  body("workout", "Workout must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("workout").custom(async (value, { req }) => {
+    if (!Mongoose.prototype.isValidObjectId(value)) {
+      throw new Error(`Workout with id '${value}' does not exist.`);
+    }
+    const workoutExists = await WorkoutSchema.exists({
+      _id: value,
+      user: req.user.id,
+    });
+    if (!workoutExists)
+      throw new Error(`Workout with id '${value}' does not exist.`);
+    return true;
+  }),
   body("series", "Series must not be empty.")
     .trim()
     .isLength({ min: 1 })
@@ -175,10 +206,11 @@ exports.sessions_update = [
         return next(err);
       }
 
-      const { exercise, series, reps, weight, rest, date } = req.body;
+      const { exercise, workout, series, reps, weight, rest, date } = req.body;
       const upated_at = new Date();
 
       session.exercise = exercise;
+      session.workout = workout;
       session.series = series;
       session.reps = reps;
       session.weight = weight;

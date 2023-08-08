@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 const ExerciseSchema = require("../models/Exercise");
 const MuscleGroupSchema = require("../models/MuscleGroup");
 const SessionSchema = require("../models/Session");
+const WorkoutSchema = require("../models/Workout");
 
 exports.exercises_get = asyncHandler(async (req, res, next) => {
   const data = await ExerciseSchema.find(
@@ -275,9 +276,18 @@ exports.exercises_delete = asyncHandler(async (req, res, next) => {
     await SessionSchema.deleteMany({ exercise: req.params.id });
     await ExerciseSchema.findByIdAndDelete(req.params.id);
 
+    const workouts = await WorkoutSchema.find({ user: req.user.id });
+    workouts.forEach(async (workout) => {
+      workout.exercises = workout.exercises.filter(
+        (exercise) => exercise._id.toString() !== req.params.id
+      );
+      await workout.save();
+    });
+
     res.json({
       success: true,
-      message: "Exercise and related Sessions deleted successfully.",
+      message:
+        "Exercise and related Sessions deleted successfully. Workouts exercise array updated successfuly",
     });
   } else {
     const err = new Error("Exercise not found");
