@@ -9,7 +9,7 @@ const WorkoutSchema = require("../models/Workout");
 exports.sessions_get = asyncHandler(async (req, res, next) => {
   const data = await SessionSchema.find(
     req.user.roles.includes("admin") ? {} : { user: req.user.id },
-    "id name exercise workout series reps weight rest user created_at updated_at"
+    "id name exercise workout sets reps weight rest user created_at updated_at"
   );
 
   res.json({
@@ -28,7 +28,7 @@ exports.sessions_get_detail = asyncHandler(async (req, res, next) => {
 
   const data = await SessionSchema.findById(
     req.params.id,
-    "id name exercise workout series reps weight rest user created_at updated_at"
+    "id name exercise workout sets reps weight rest user created_at updated_at"
   );
 
   if (!data) {
@@ -77,10 +77,7 @@ exports.sessions_create = [
       throw new Error(`Workout with id '${value}' does not exist.`);
     return true;
   }),
-  body("series", "Series must not be empty.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
+  body("sets", "Sets must not be empty.").trim().isLength({ min: 1 }).escape(),
   body("reps", "Repetitions must not be empty.")
     .trim()
     .isLength({ min: 1 })
@@ -98,12 +95,12 @@ exports.sessions_create = [
       return;
     }
 
-    const { exercise, workout, series, reps, weight, rest, date } = req.body;
+    const { exercise, workout, sets, reps, weight, rest, date } = req.body;
 
     const session = new SessionSchema({
       exercise,
       workout,
-      series,
+      sets,
       reps,
       weight: weight ? weight : 0,
       rest,
@@ -121,7 +118,7 @@ exports.sessions_create = [
         id: session._id,
         exercise: session.exercise,
         workout: session.workout,
-        series: session.series,
+        sets: session.sets,
         reps: session.reps,
         weight: session.weight,
         rest: session.rest,
@@ -167,10 +164,7 @@ exports.sessions_update = [
       throw new Error(`Workout with id '${value}' does not exist.`);
     return true;
   }),
-  body("series", "Series must not be empty.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
+  body("sets", "Sets must not be empty.").trim().isLength({ min: 1 }).escape(),
   body("reps", "Repetitions must not be empty.")
     .trim()
     .isLength({ min: 1 })
@@ -197,7 +191,7 @@ exports.sessions_update = [
     try {
       const session = await SessionSchema.findById(
         req.params.id,
-        "id name exercise workout series reps weight rest user created_at updated_at"
+        "id name exercise workout sets reps weight rest user created_at updated_at"
       );
 
       if (!session) {
@@ -206,12 +200,12 @@ exports.sessions_update = [
         return next(err);
       }
 
-      const { exercise, workout, series, reps, weight, rest, date } = req.body;
+      const { exercise, workout, sets, reps, weight, rest, date } = req.body;
       const upated_at = new Date();
 
       session.exercise = exercise;
       session.workout = workout;
-      session.series = series;
+      session.sets = sets;
       session.reps = reps;
       session.weight = weight;
       session.rest = rest;
@@ -227,7 +221,7 @@ exports.sessions_update = [
           _id: session._id,
           exercise: session.exercise,
           workout: session.workout,
-          series: session.series,
+          sets: session.sets,
           reps: session.reps,
           weight: session.weight,
           rest: session.rest,

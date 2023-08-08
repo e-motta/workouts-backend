@@ -8,12 +8,14 @@ const cors = require("cors");
 
 const { log, logError } = require("./logger");
 const useDatabase = require("./database");
+const authRouter = require("./routes/auth");
 const usersRouter = require("./routes/users");
 const muscleGroupsRouter = require("./routes/muscleGroups");
 const exercisesRouter = require("./routes/exercises");
 const workoutsRouter = require("./routes/workouts");
 const sessionsRouter = require("./routes/sessions");
-const authRouter = require("./routes/auth");
+const sessionStatsRouter = require("./routes/sessionStats");
+const overallStatsRouter = require("./routes/overallStats");
 const auth = require("./auth");
 
 const app = express();
@@ -54,6 +56,8 @@ app.use("/api/muscle_groups", auth.authenticateToken, muscleGroupsRouter);
 app.use("/api/exercises", auth.authenticateToken, exercisesRouter);
 app.use("/api/workouts", auth.authenticateToken, workoutsRouter);
 app.use("/api/sessions", auth.authenticateToken, sessionsRouter);
+app.use("/api/session_stats", auth.authenticateToken, sessionStatsRouter);
+app.use("/api/overall_stats", auth.authenticateToken, overallStatsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
