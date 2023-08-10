@@ -6,7 +6,7 @@ const SessionStatsSchema = require("../models/SessionStats");
 exports.session_stats_get = asyncHandler(async (req, res, next) => {
   const data = await SessionStatsSchema.find(
     req.user.roles.includes("admin") ? {} : { user: req.user.id },
-    "id name session exercise estimated1RM relativeIntensity trainingVolume densityLoad created_at updated_at"
+    "id user session exercise estimated1RM relativeIntensity trainingVolume densityLoad created_at updated_at"
   );
 
   res.json({
@@ -25,7 +25,7 @@ exports.session_stats_get_detail = asyncHandler(async (req, res, next) => {
 
   const data = await SessionStatsSchema.findById(
     req.params.id,
-    "id name session exercise estimated1RM relativeIntensity trainingVolume densityLoad created_at updated_at"
+    "id user session exercise estimated1RM relativeIntensity trainingVolume densityLoad created_at updated_at"
   );
 
   if (!data) {

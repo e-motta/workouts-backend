@@ -3,32 +3,29 @@ const { getStatsFromSession } = require("../lib/sessionStats");
 
 exports.registerSessionStatsHook = (schema) => {
   schema.post("save", async (session) => {
-    try {
-      const stats = getStatsFromSession(session);
+    const stats = getStatsFromSession(session);
 
-      let sessionStats = await SessionStatsSchema.findOne({
+    let sessionStats = await SessionStatsSchema.findOne({
+      exercise: session.exercise,
+      workout: session.workout,
+    });
+
+    if (!sessionStats) {
+      sessionStats = new SessionStatsSchema({
+        user: session.user,
+        session: session.id,
         exercise: session.exercise,
-        workout: session.workout,
+        ...stats,
+        created_at: new Date(),
+        updated_at: new Date(),
       });
-
-      if (!sessionStats) {
-        sessionStats = new SessionStatsSchema({
-          session: session.id,
-          exercise: session.exercise,
-          ...stats,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-      } else {
-        sessionStats.set({
-          ...stats,
-          updated_at: new Date(),
-        });
-      }
-
-      await sessionStats.save();
-    } catch (error) {
-      console.error("Error updating SessionStats:", error);
+    } else {
+      sessionStats.set({
+        ...stats,
+        updated_at: new Date(),
+      });
     }
+
+    await sessionStats.save();
   });
 };

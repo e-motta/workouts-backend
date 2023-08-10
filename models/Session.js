@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { registerSessionStatsHook } = require("../service/sessionStats");
+const { registerOverallStatsHook } = require("../service/overallStats");
 const Schema = mongoose.Schema;
 
 const SessionSchema = new Schema({
@@ -16,5 +17,6 @@ const SessionSchema = new Schema({
 });
 
 registerSessionStatsHook(SessionSchema);
+registerOverallStatsHook(SessionSchema);
 
 module.exports = mongoose.model("Session", SessionSchema);

@@ -88,7 +88,7 @@ exports.sessions_create = [
   body("rest", "Rest must be 0 or greater.").isInt({ gt: -1 }).escape(),
   body("weight", "Weight must be a number.").isNumeric().escape(),
   body("weight", "Weight must be 0 or greater.").isInt({ gt: -1 }).escape(),
-  body("date", "Date must be a date.").isDate().escape(),
+  body("date", "Date must be a date.").isISO8601().escape(),
 
   asyncHandler(async function (req, res, next) {
     const errors = validationResult(req);
@@ -181,7 +181,7 @@ exports.sessions_update = [
   body("rest", "Rest must be 0 or greater.").isInt({ gt: -1 }).escape(),
   body("weight", "Weight must be a number.").isNumeric().escape(),
   body("weight", "Weight must be 0 or greater.").isInt({ gt: -1 }).escape(),
-  body("date", "Date must be a date.").isDate().escape(),
+  body("date", "Date must be a date.").isISO8601().escape(),
 
   asyncHandler(async function (req, res, next) {
     if (!Mongoose.prototype.isValidObjectId(req.params.id)) {
